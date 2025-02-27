@@ -29,7 +29,50 @@ const authService = {
         userTypeId: userTypeId,
       },
     });
+
+    delete userNew.password;
     return userNew;
+  },
+  login: async (req) => {
+    const { email, password } = req.body;
+    console.log({ email, password });
+
+    const userExists = await prisma.users.findFirst({
+      where: {
+        email: email,
+      },
+    });
+
+    if (!userExists) {
+      throw new BadRequestException(`Tài khoản chưa tồn tại, Vui lòng đăng ký`);
+    }
+
+    // if (!userExists.password) {
+    //   if (userExists.face_app_id) {
+    //     throw new BadRequestException(
+    //       `Vui lòng đăng nhập bằng facebook, để tạo mật khẩu mới`
+    //     );
+    //   }
+    //   if (userExists.goole_id) {
+    //     throw new BadRequestException(
+    //       `Vui lòng đăng nhập bằng google, để tạo mật khẩu mới`
+    //     );
+    //   }
+    //   throw new BadRequestException(
+    //     `Không hợp lệ, vui lòng liện hệ chăm sóc khách hàng`
+    //   );
+    // }
+
+    // so sánh password
+    const isPassword = bcrypt.compareSync(password, userExists.password);
+    if (!isPassword) {
+      throw new BadRequestException(`Mật khẩu không chính xác`);
+    }
+
+    return {
+      accessToken: `123`,
+      refreshToken: `789`,
+    };
   },
 };
 
