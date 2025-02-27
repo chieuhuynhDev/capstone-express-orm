@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model CourseCategories {
+  courseCategories_id Int       @id @default(autoincrement())
+  categoryCode        String    @unique(map: "categoryCode") @db.VarChar(50)
+  categoryName        String    @db.VarChar(255)
+  Courses             Courses[]
+}
+
+model Courses {
+  courses_id       Int              @id @default(autoincrement())
+  courseCode       String           @unique(map: "courseCode") @db.VarChar(50)
+  alias            String           @db.VarChar(255)
+  courseName       String           @db.VarChar(255)
+  description      String?          @db.Text
+  views            Int?             @default(0)
+  imageUrl         String?          @db.VarChar(255)
+  createdDate      DateTime         @db.Date
+  studentCount     Int?             @default(0)
+  creatorId        Int?
+  categoryId       Int
+  Users            Users?           @relation(fields: [creatorId], references: [users_id], onUpdate: NoAction, map: "Courses_ibfk_1")
+  CourseCategories CourseCategories @relation(fields: [categoryId], references: [courseCategories_id], onUpdate: NoAction, map: "Courses_ibfk_2")
+
+  @@index([categoryId], map: "categoryId")
+  @@index([creatorId], map: "creatorId")
+}
+
+model UserTypes {
+  userTypes_id Int     @id @default(autoincrement())
+  userTypeCode String  @unique(map: "userTypeCode") @db.VarChar(10)
+  userTypeName String  @db.VarChar(100)
+  Users        Users[]
+}
+
+model Users {
+  users_id    Int       @id @default(autoincrement())
+  password    String    @db.VarChar(255)
+  fullName    String    @db.VarChar(255)
+  phoneNumber String?   @db.VarChar(20)
+  email       String    @unique(map: "email") @db.VarChar(255)
+  userTypeId  Int
+  Courses     Courses[]
+  UserTypes   UserTypes @relation(fields: [userTypeId], references: [userTypes_id], onUpdate: NoAction, map: "Users_ibfk_1")
+
+  @@index([userTypeId], map: "userTypeId")
+}
