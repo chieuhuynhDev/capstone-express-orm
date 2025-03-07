@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  images      Image[] // Ảnh mà user đã tạo
+  comments    Comment[] // Bình luận mà user đã viết
+  savedImages SavedImage[] // Ảnh mà user đã lưu
+}
+
+model Image {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  url         String // Đường dẫn tới ảnh
+  userId      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments Comment[] // Bình luận của ảnh
+  savedBy  SavedImage[] // Người dùng đã lưu ảnh này
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  userId    Int
+  imageId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  image Image @relation(fields: [imageId], references: [id], onDelete: Cascade)
+}
+
+model SavedImage {
+  userId  Int
+  imageId Int
+  savedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  image Image @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+  @@id([userId, imageId]) // Khóa chính composite
+}
