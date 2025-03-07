@@ -13,6 +13,10 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
+app.get(`/`, (request, response, next) => {
+  response.json(`ok`);
+});
+
 // Phục vụ file tĩnh từ thư mục uploads
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
