@@ -4,14 +4,14 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Image Sharing API",
+      title: "Capstone Express ORM",
       version: "1.0.0",
       description: "API documentation for the Image Sharing backend",
     },
     servers: [
       {
         url: "http://localhost:5000",
-        description: "Development server",
+        description: "Server tại local",
       },
     ],
     components: {
