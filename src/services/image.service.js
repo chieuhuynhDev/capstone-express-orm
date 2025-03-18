@@ -49,6 +49,20 @@ const imageService = {
       include: { user: true },
     });
   },
+  saveImage: async (userId, imageId) => {
+    // Kiểm tra xem ảnh có tồn tại không
+    const image = await prisma.image.findUnique({
+      where: { id: +imageId },
+    });
+    if (!image) throw new Error("Image not found");
+
+    return prisma.savedImage.create({
+      data: {
+        userId,
+        imageId: Number(imageId),
+      },
+    });
+  },
 };
 
 export default imageService;

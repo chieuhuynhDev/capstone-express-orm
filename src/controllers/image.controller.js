@@ -63,6 +63,8 @@ const imageController = {
     try {
       const { id } = req.params;
       const userId = req.user.userId;
+      console.log(" userId:", userId, "| imageId:", id);
+
       const isSaved = await imageService.checkSavedImage(userId, id);
 
       const resData = responseSuccess(
@@ -113,6 +115,24 @@ const imageController = {
       res.status(resData.code).json(resData);
     } catch (error) {
       next(error);
+    }
+  },
+  saveImage: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user.userId;
+      // Kiểm tra xem ảnh đã được lưu chưa
+      const isSaved = await imageService.checkSavedImage(userId, id);
+
+      if (isSaved) {
+        return res.status(400).json({ error: "Image already saved" });
+      }
+      const saved = await imageService.saveImage(userId, id);
+
+      const resData = responseSuccess(201, `Image saved successfully`, saved);
+      res.status(resData.code).json(resData);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
     }
   },
 };

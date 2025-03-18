@@ -189,4 +189,27 @@ imageRouter.post(
   imageController.uploadImage
 );
 
+/**
+ * @swagger
+ * /api/images/{id}/save:
+ *   post:
+ *     summary: Save an image for the user
+ *     tags: [Images]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Image ID
+ *     responses:
+ *       201:
+ *         description: Image saved successfully
+ *       400:
+ *         description: Bad request (e.g., image already saved or not found)
+ */
+imageRouter.post("/:id/save", protect, imageController.saveImage);
+
 export default imageRouter;
