@@ -1,15 +1,9 @@
 ﻿import express from "express";
-import {
-  getImages,
-  searchImages,
-  getImageDetails,
-  getComments,
-  checkSavedImage,
-  addComment,
-  uploadImage, // Thêm hàm mới
-} from "../controllers/imageController.js";
-import authMiddleware from "../middleware/auth.js";
+import imageController from "../controllers/image.controller.js";
+import { protect } from "../middleware/auth.js";
 import multer from "multer";
+
+const imageRouter = express.Router();
 
 // Cấu hình multer để lưu file vào thư mục uploads
 const storage = multer.diskStorage({
@@ -23,8 +17,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-const router = express.Router();
-
 /**
  * @swagger
  * /api/images:
@@ -37,7 +29,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get("/", getImages);
+imageRouter.get("/", imageController.getImages);
 
 /**
  * @swagger
@@ -58,7 +50,7 @@ router.get("/", getImages);
  *       500:
  *         description: Server error
  */
-router.get("/search", searchImages);
+imageRouter.get("/search", imageController.searchImages);
 
 /**
  * @swagger
@@ -79,7 +71,7 @@ router.get("/search", searchImages);
  *       404:
  *         description: Image not found
  */
-router.get("/:id", getImageDetails);
+imageRouter.get("/:id", imageController.getImageDetails);
 
 /**
  * @swagger
@@ -100,7 +92,7 @@ router.get("/:id", getImageDetails);
  *       500:
  *         description: Server error
  */
-router.get("/:id/comments", getComments);
+imageRouter.get("/:id/comments", imageController.getComments);
 
 /**
  * @swagger
@@ -123,7 +115,7 @@ router.get("/:id/comments", getComments);
  *       500:
  *         description: Server error
  */
-router.get("/:id/saved", authMiddleware, checkSavedImage);
+imageRouter.get("/:id/saved", protect, imageController.checkSavedImage);
 
 /**
  * @swagger
@@ -157,7 +149,7 @@ router.get("/:id/saved", authMiddleware, checkSavedImage);
  *       400:
  *         description: Bad request
  */
-router.post("/:id/comments", authMiddleware, addComment);
+imageRouter.post("/:id/comments", protect, imageController.addComment);
 
 /**
  * @swagger
@@ -190,6 +182,11 @@ router.post("/:id/comments", authMiddleware, addComment);
  *       400:
  *         description: Bad request
  */
-router.post("/upload", authMiddleware, upload.single("image"), uploadImage);
+imageRouter.post(
+  "/upload",
+  protect,
+  upload.single("image"),
+  imageController.uploadImage
+);
 
-export default router;
+export default imageRouter;

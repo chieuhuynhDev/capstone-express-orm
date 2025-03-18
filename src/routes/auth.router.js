@@ -1,7 +1,7 @@
 ﻿import express from "express";
-import { register, login } from "../controllers/authController.js";
+import authControler from "../controllers/auth.controller.js";
 
-const router = express.Router();
+const authRouter = express.Router();
 
 /**
  * @swagger
@@ -32,7 +32,7 @@ const router = express.Router();
  *       400:
  *         description: Bad request
  */
-router.post("/register", register);
+authRouter.post("/register", authControler.register);
 
 /**
  * @swagger
@@ -60,6 +60,6 @@ router.post("/register", register);
  *       401:
  *         description: Unauthorized
  */
-router.post("/login", login);
+authRouter.post("/login", authControler.login);
 
-export default router;
+export default authRouter;
